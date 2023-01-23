@@ -16,10 +16,18 @@ app.use(express.static("public"))
 // Socket.io 
 io.on("connection", socket => {
     console.log("Client connected: ", socket.id)
-    socket.on("disconnect", reason => {
-        console.log("Client disconnected: ", socket.id)
+    // Tell everyone else about user
+    socket.on("user", (data) => {
+        socket.broadcast.emit("user")
     })
 
+    socket.on("disconnect", reason => {
+        console.log("Client disconnected: ", socket.id, `(${reason})`)
+    })
+
+    socket.on("message:post", (data) => {
+        socket.broadcast.emit("message:get", data)
+    })
     
 
 })
