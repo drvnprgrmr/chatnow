@@ -18,22 +18,16 @@ io.on("connection", async (socket) => {
     console.log("Client connected: ", socket.id)
 
     const sockets = await io.fetchSockets()
-    console.log("number of clients: ", sockets.length)
     // Tell new user about previously existing users
-    sockets.forEach(s => {
-        console.log("s.id: ", s.id, "socket.id: ", socket.id)
-        if (s.id !== socket.id) {
-            console.log("previous user: ", s.id)
-            socket.emit("user:dump", {
-                id: s.id,
-                username: s.username
-            })
-        }
-    })
+    if (sockets.length > 1) {
+        socket.emit("user:dump", sockets.map(s => {
+            return {id: s.id, username: s.username}
+        }))
+    }
 
 
     // Tell everyone else about new user
-    socket.on("user:enter", (data) => {
+    socket.on("user:enter", (data) => {  
         socket.username = data.username
         socket.broadcast.emit("user:enter", data)
     })
@@ -55,10 +49,6 @@ io.on("connection", async (socket) => {
 app.get("/", (req, res) => {
     res.render("index")
 })
-
-
-
-
 
 
 

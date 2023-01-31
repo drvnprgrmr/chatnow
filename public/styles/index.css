@@ -13,9 +13,10 @@ main {
 }
 
 .sidebar {
-    width: 20rem;
+    flex-grow: 1;
     padding: 1rem;
     background-color: gainsboro;
+    height: 100vh;
 }
 
 .chat {
@@ -23,7 +24,9 @@ main {
     flex-direction: column;
     justify-content: space-between;
     
-    width: 100%;
+    height: 100vh;
+
+    flex-grow: 3;
     padding: 1rem;
 }
 
@@ -52,21 +55,18 @@ main {
     border-radius: .5rem;
     margin: 0 1rem;
     border: none;
-
-    /* color: white; */
-    /* background-color: #07BEB8; */
 }
 
 #msg-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    height: 30rem;
     overflow: scroll;
 }
 
 .msg {
     width: fit-content;
+    max-width: 20rem;
     margin-bottom: 1rem;
     padding: .5rem;
 }
