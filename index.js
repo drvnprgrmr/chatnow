@@ -37,8 +37,8 @@ io.on("connection", async (socket) => {
         socket.broadcast.emit("user:leave", socket.id)
     })
 
-    socket.on("message:post", (data) => {
-        socket.broadcast.emit("message:get", data)
+    socket.on("genMsg:post", (data) => {
+        socket.broadcast.emit("genMsg:get", data)
     })
     
 

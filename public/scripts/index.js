@@ -1,9 +1,15 @@
+import utils from "./utils.js" 
+
 const msgInp = document.getElementById("msg-inp")
-const sendMsg = document.getElementById("send-msg")
 const form = document.getElementById("form")
 
 const msgList = document.getElementById("msg-list")
 const userList = document.getElementById("users")
+
+
+// Create lists to hold general and private messages
+const generalMessages = []
+const privateMessages = {}
 
 const socket = io()
 
@@ -24,20 +30,22 @@ socket.on("disconnect", (reason) => {
 
 
 socket.on("user:enter", data => {
-    // Add new user to list of connected users
-    const newUser = `<li class="user" id="${data.id}">&lt;${data.username}&gt;</li>`
-    userList.innerHTML += newUser
+    // Create new user
+    utils.createUser(data)
+
+    // Create new list to hold messages to this user
+    privateMessages[data.id] = []
 })
 
 socket.on("user:dump", data => {
     // Add new user to list of connected users
-    console.log("user dump")
-    console.log(data)
     for (let {id, username} of data) {
         if (id !== socket.id) {
-            // Add user to socket list
-            const newUser = `<li class="user" id="${id}">&lt;${username}&gt;</li>`
-            userList.innerHTML += newUser
+            // Create new user
+            utils.createUser({id, username})
+
+            // Create new list to hold messages to this user
+            privateMessages[data.id] = []
         }
     }
 })
@@ -48,9 +56,29 @@ socket.on("user:leave", id => {
     user.remove()
 })
 
-socket.on("message:get", (data) => {
-    const newMsg = `<li class="msg"><span class="sender">${data.username}</span>${data.msg}</li>`
+
+socket.on("genMsg:get", (data) => {
+    const newMsg = `
+        <li class="msg">
+            <p class="msg--sender">${data.username}</p>
+            <p class="msg--text">${data.msg}</p>
+            <span class="msg--timestamp">${data.timestamp}</span>
+        </li>
+    `
     msgList.innerHTML += newMsg
+
+    // Auto scroll to the end
+    msgList.scrollTop = msgList.scrollHeight
+    
+    generalMessages.push(
+        {
+            userId: data.id,
+            username: data.username,
+            msg: data.msg,
+            timestamp: data.timestamp
+        }
+    )
+    
 })
 
 
@@ -60,14 +88,28 @@ form.addEventListener("submit", (e) => {
     e.preventDefault()
 
     // Add current message to list of messages
-    if (msgInp.value) {
-        const newMsg = `<li class="msg my-msg">${msgInp.value}</li>`
+    if (msgInp.value.trim()) {
+        // Calculate timestamp
+        const d = new Date()
+        let timestamp = d.toLocaleTimeString('en-US', {timeStyle: "short"})
+
+        // Create message
+        const newMsg = `
+            <li class="msg my-msg">
+                <p class="msg--text">${msgInp.value}</p>
+                <span class="msg--timestamp">${timestamp}</span>
+            </li>
+        `
         msgList.innerHTML += newMsg
-        
-        socket.emit("message:post", {
+
+        // Auto scroll to the end
+        msgList.scrollTop = msgList.scrollHeight
+
+        socket.emit("genMsg:post", {
+            userId: socket.id,
             username, 
             msg: msgInp.value,
-            timestamp: Date.now()
+            timestamp
         })
         msgInp.value = ""
     }
