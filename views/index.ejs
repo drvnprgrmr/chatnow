@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <link rel="stylesheet" href="styles/index.css">
         <title>Chatnow</title>
     </head>
@@ -12,22 +13,17 @@
     <body>
         <main>
             <div class="sidebar">
-                <ul id="users">
-                    
+                <ul id="user-list">
+
                 </ul>
             </div>
             <div class="chat">
                 <div class="messages">
                     <ul id="msg-list">
-                        <!-- <li class="msg">
-                            <p class="msg--sender">username</p>
-                            <p class="msg--text">${data.msg}</p>
-                            <span class="msg--timestamp">11:59 PM</span>
-                        </li> -->
+                      
                     </ul>
                 </div>
                 <form id="form">
-                    <input type="hidden" id="send-to" value="group">
                     <input type="text" placeholder="New message" id="msg-inp">
                 </form>
             </div>
@@ -35,6 +31,6 @@
     </body>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script type="module" src="scripts/index.js"></script>
+    <script src="scripts/index.js"></script>
 
 </html>

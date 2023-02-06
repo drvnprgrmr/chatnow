@@ -26,6 +26,7 @@ io.on("connection", async (socket) => {
     }
 
 
+
     // Tell everyone else about new user
     socket.on("user:enter", (data) => {  
         socket.username = data.username
@@ -37,8 +38,13 @@ io.on("connection", async (socket) => {
         socket.broadcast.emit("user:leave", socket.id)
     })
 
-    socket.on("genMsg:post", (data) => {
-        socket.broadcast.emit("genMsg:get", data)
+    socket.on("groupMsg:post", (msg) => {
+        socket.broadcast.emit("groupMsg:get", msg)
+    })
+
+    socket.on("privMsg:post", (id, msg) => {
+        // Send message to user with id
+        socket.to(id).emit("privMsg:get", msg)
     })
     
 
