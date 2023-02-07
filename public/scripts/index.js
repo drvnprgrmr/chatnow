@@ -69,7 +69,14 @@ socket.on("user:leave", id => {
 
 socket.on("groupMsg:get", (msg) => {
     // Create message element and add it to page
-    createMessage(msg)
+    if (sendTo === "group") createMessage(msg)
+    else {
+        // Increase the notification count
+        const unreadEl = document.querySelector("#group .user--unread")
+        unreadEl.style.display = "initial"
+        unreadEl.textContent = +unreadEl.textContent + 1
+
+    }
     
     // Push message to general list
     groupMessages.push(msg)
@@ -78,7 +85,14 @@ socket.on("groupMsg:get", (msg) => {
 
 socket.on("privMsg:get", msg => {
     // Create message element and add it to page
-    createMessage(msg)
+    if (sendTo === msg.userId) createMessage(msg)
+    else {
+        // Increase the notification count
+        const unreadEl = document.querySelector(`#${msg.userId} .user--unread`)
+        unreadEl.style.display = "initial"
+        unreadEl.textContent = +unreadEl.textContent + 1
+
+    }
 
     // Add new message to private messages from this user
     privateMessages[msg.userId].push(msg)
@@ -161,6 +175,12 @@ function createUser(data) {
     user.id = data.id
     user.className = "user"
     user.innerText = data.username
+    
+    // Unread element for handling notifications
+    const unread = document.createElement("span")
+    unread.className = "user--unread"
+    unread.style.display = "none"
+    user.append(unread)
 
     // Add click event handler
     user.addEventListener("click", selectUser)
@@ -175,25 +195,36 @@ function selectUser(ev) {
     // Get selected user
     const user = ev.currentTarget
 
-    // Clear current chat list
-    msgList.innerHTML = ""
+    // Make sure user isn't currently selected
+    if (!user.classList.contains("user--selected")) {
+        // Clear current chat list
+        msgList.innerHTML = ""
+    
+        // Remove previously highlighted user
+        const prevUser = document.getElementsByClassName("user--selected")[0]
+        if (prevUser) prevUser.classList.remove("user--selected")
+    
+        // Highlight user clicked
+        user.classList.add("user--selected")
 
-    // Remove previously highlighted user
-    const prevUser = document.getElementsByClassName("user--selected")[0]
-    if (prevUser) prevUser.classList.remove("user--selected")
-
-    // Highlight user clicked
-    user.classList.add("user--selected")
-
-    if (user.id === "group") {
-        // Load group messages
-        loadMessages()
-        sendTo = "group"
-    } else {
-        // Load private messages
-        loadMessages(user.id)
-        sendTo = user.id
+        // Clear unread notification
+        const unreadEl = user.lastChild
+        if (unreadEl.textContent !== "") {
+            unreadEl.style.display = "none"
+            unreadEl.textContent = ""
+        }
+    
+        if (user.id === "group") {
+            // Load group messages
+            loadMessages()
+            sendTo = "group"
+        } else {
+            // Load private messages
+            loadMessages(user.id)
+            sendTo = user.id
+        }
     }
+
 
 }
 

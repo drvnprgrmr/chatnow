@@ -24,16 +24,20 @@ main {
 
 .sidebar {
     flex-grow: 1;
-    padding: 1rem;
     background-color: #495057;
 
     min-width: 10rem;
     max-width: 20rem;
 }
 
+#me {
+    height: 3rem;
+    /* background-color: #; */
+}
+
 #user-list {
     list-style-type: none;
-    padding: 0;
+    padding: 1rem;
     margin: 0;
     max-height: 90vh;
     overflow-y: auto;
@@ -41,15 +45,28 @@ main {
 #user-list::-webkit-scrollbar { display: none; }
 
 .user {
+    position: relative;
     padding: 1rem;
     border-bottom: 1px solid #343a40;
     max-width: 15rem;
     margin: 0 auto;
+    cursor: pointer;
 }
 
 .user:hover {
-    cursor: pointer;
     background-color: #343a40;
+}
+
+.user--unread {
+    position: absolute;
+    top: .3rem;
+    right: .3rem;
+
+    font-size: small;
+    /* border: 1px solid #212529  ; */
+    background-color: #212529;
+    border-radius: 1rem;
+    padding: .3rem;
 }
 
 .user--selected {
@@ -101,6 +118,19 @@ main {
     border: none;
     outline: none;
     background-color: #6c757d;
+}
+
+#send {
+    /* Remove button styles */
+    background-color: unset;
+    margin: 0;
+    padding: 0;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    padding-left: .6rem;
+    cursor: pointer;
 }
 
 #msg-list {
