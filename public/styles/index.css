@@ -22,17 +22,28 @@ main {
     display: flex;
 }
 
-.sidebar {
+#sidebar {
     flex-grow: 1;
-    background-color: #495057;
+    background-color: #343a40;
 
     min-width: 10rem;
     max-width: 20rem;
+    border-right: 2px solid #adb5bd;
+
 }
 
 #me {
     height: 3rem;
-    /* background-color: #; */
+    padding: 0 1rem;
+    background-color: #495057;
+    display: flex;
+}
+
+#username {
+    background-color: #495057;
+    border: none;
+    outline: none;
+    font-size: initial;
 }
 
 #user-list {
@@ -47,14 +58,14 @@ main {
 .user {
     position: relative;
     padding: 1rem;
-    border-bottom: 1px solid #343a40;
+    border-bottom: 1px solid #212529;
     max-width: 15rem;
     margin: 0 auto;
     cursor: pointer;
 }
 
 .user:hover {
-    background-color: #343a40;
+    background-color: #212529;
 }
 
 .user--unread {
@@ -70,7 +81,7 @@ main {
 }
 
 .user--selected {
-    background-color: #343a40;
+    background-color: #212529;
 }
 
 
@@ -82,19 +93,37 @@ main {
 
 
 
-.chat {
+#chat {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
     flex-grow: 3;
-    padding: 1rem;
+    /* padding: 1rem; */
 }
 
+#current-chat {
+    height: 3rem;
+    padding: 0 1rem;
+    background-color: #495057;
+    display: flex;
+}
+
+#back {
+    display: none;
+    align-items: center;
+    cursor: pointer;
+    padding-right: .5rem;
+}
+
+#current-user {
+    display: flex;
+    align-items: center;
+}
 
 #form {
   display: flex;
   height: 3rem;
+  margin: 1rem;
 }
 
 #msg-inp {
@@ -134,10 +163,11 @@ main {
 }
 
 #msg-list {
+    flex-grow: 1;
     list-style-type: none;
     
     max-height: 90vh;
-    margin: 0;
+    margin: 1rem;
     padding: 0;
     overflow-y: auto;
 }
@@ -184,3 +214,17 @@ main {
     padding: .2rem;
 }
 
+
+@media screen and (max-width: 700px) {
+    #chat {
+        display: none;
+    }
+
+    #sidebar {
+        max-width: 100%;
+    }
+
+    .user {
+        max-width: 90%;
+    }
+}

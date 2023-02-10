@@ -1,8 +1,14 @@
 const msgInp = document.getElementById("msg-inp")
 const form = document.getElementById("form")
 
-const msgList = document.getElementById("msg-list")
+const sidebar = document.getElementById("sidebar")
 const userList = document.getElementById("user-list")
+
+const chat = document.getElementById("chat")
+const msgList = document.getElementById("msg-list")
+
+const back = document.getElementById("back")
+const currentUser = document.getElementById("current-user")
 
 let sendTo = "group"
 
@@ -12,23 +18,38 @@ const privateMessages = {}
 
 const socket = io()
 
-// Load username and session id
+// Load username
 let username = sessionStorage.getItem("username")
-let sessionId = sessionStorage.getItem("session id")
 if (!username) {
     username = prompt("Enter a username: ")
     sessionStorage.setItem("username", username)
-
 }
 
+// Set the username of the user
+const usernameEl = document.getElementById("username")
+usernameEl.value = username
 
+// Show the sidebar and hide chat when back is clicked
+back.addEventListener("click", () => {
+    sidebar.style.display = "initial"
+    chat.style.display = "none"
+    back.style.display = "none"
+})
+
+
+
+/**
+ * Socket stuff
+ */
 socket.on("connect", () => {
     console.log("connected to server")
     socket.emit("user:enter", { id: socket.id, username })
 
-    // Get group chat and add event listener to it
     const groupEl = createUser({id: "group", username: "Group Chat"})
+    
+    // Set default chat to group
     groupEl.classList.add("user--selected")
+    currentUser.innerText = "Group Chat"
 
 })
 
@@ -150,8 +171,6 @@ form.addEventListener("submit", (e) => {
 
 
 
-
-
 function createMessage(msg) {
     const msgEl = `
         <li class="msg">
@@ -197,6 +216,9 @@ function selectUser(ev) {
 
     // Make sure user isn't currently selected
     if (!user.classList.contains("user--selected")) {
+        // Set the name of the current user
+        currentUser.innerText = user.innerText
+
         // Clear current chat list
         msgList.innerHTML = ""
     
@@ -223,6 +245,18 @@ function selectUser(ev) {
             loadMessages(user.id)
             sendTo = user.id
         }
+    }
+
+
+    /**
+     * For Mobile views
+     */
+    // Hide the sidebar and show the chat once clicked
+    const chatStyle = getComputedStyle(chat)
+    if (chatStyle.display === "none") {
+        sidebar.style.display = "none"
+        chat.style.display = "flex"
+        back.style.display = "flex"
     }
 
 
