@@ -298,3 +298,6 @@ function loadMessages(id="group") {
         msgList.prepend(msgEl)
     }
 }
+
+// TODO: Display group messages properly by adding usernames
+// TODO: Finetune the createMessage function
