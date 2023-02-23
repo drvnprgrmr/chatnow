@@ -137,19 +137,10 @@ form.addEventListener("submit", (e) => {
             timestamp
         }
 
-        // Create message
-        const msgEl = `
-            <li class="msg my-msg">
-                <p class="msg--text">${msgInp.value}</p>
-                <span class="msg--timestamp">${timestamp}</span>
-            </li>
-        `
-        msgList.innerHTML += msgEl
-
-        // Auto scroll to the end
-        msgList.scrollTop = msgList.scrollHeight
-
-
+        // Create message for the curren
+        createMessage(msg)
+        
+        // Send message to appropriate place
         if (sendTo === "group") {
             groupMessages.push(msg)
 
@@ -172,42 +163,64 @@ form.addEventListener("submit", (e) => {
 
 
 function createMessage(msg) {
-    const msgEl = `
-        <li class="msg">
-            <p class="msg--sender">${msg.username}</p>
-            <p class="msg--text">${msg.text}</p>
-            <span class="msg--timestamp">${msg.timestamp}</span>
-        </li>
-    `
-    msgList.innerHTML += msgEl
+    // Create a new message element
+    const msgEl = document.createElement("li")
+    msgEl.classList.add("msg")
+
+    // Check if it is my message
+    if (msg.userId === socket.id) {
+        msgEl.classList.add("my-msg")
+    }
+
+    // Else if it's a group message add the sender
+    else if (sendTo === "group") {
+        const msgSender = document.createElement("p")
+        msgSender.className = "msg--sender"
+        msgSender.innerText = msg.username
+        msgEl.appendChild(msgSender)
+    }
+
+    // Create and add the message text to the message
+    const msgText = document.createElement("p")
+    msgText.className = "msg--text"
+    msgText.innerText = msg.text
+    msgEl.appendChild(msgText)
+
+    // Create and add the timestamp to the message
+    const msgTime = document.createElement("span")
+    msgTime.className = "msg--timestamp"
+    msgTime.innerText = msg.timestamp
+    msgEl.appendChild(msgTime)
+
+    // Add message to the list
+    msgList.append(msgEl)
 
     // Auto scroll to the end
     msgList.scrollTop = msgList.scrollHeight
 
 }
 
-
-function createUser(data) {
-    const user = document.createElement("li")
+function createUser(user) {
+    const userEl = document.createElement("li")
 
     // Add attributes to user
-    user.id = data.id
-    user.className = "user"
-    user.innerText = data.username
+    userEl.id = user.id
+    userEl.className = "user"
+    userEl.innerText = user.username
     
     // Unread element for handling notifications
     const unread = document.createElement("span")
     unread.className = "user--unread"
     unread.style.display = "none"
-    user.append(unread)
+    userEl.append(unread)
 
     // Add click event handler
-    user.addEventListener("click", selectUser)
+    userEl.addEventListener("click", selectUser)
 
     // Update user list with new user
-    userList.appendChild(user)
+    userList.appendChild(userEl)
 
-    return user
+    return userEl
 }
 
 function selectUser(ev) {
@@ -265,36 +278,10 @@ function selectUser(ev) {
 function loadMessages(id="group") {
     let msgs
 
-    if (id === "group") {
-        msgs = groupMessages
-    } else {
-        msgs = privateMessages[id]
-    }
+    // Determine which messages to load
+    id === "group" ? msgs = groupMessages : msgs = privateMessages[id]
 
-    // Re-populate messages from the most recent
-    for (let i = msgs.length - 1; i >= 0; i--) {
-        const msg = msgs[i]
-    
-        // Create a new message element
-        const msgEl = document.createElement("li")
-        msgEl.classList.add("msg")
-        
-        // Check if it is my message
-        msg.userId === socket.id ? msgEl.classList.add("my-msg") : null
-        
-        // Create and add the message text to the message
-        const msgText = document.createElement("p")
-        msgText.className = "msg--text"
-        msgText.innerText = msg.text
-        msgEl.appendChild(msgText)
-    
-        // Create and add the timestamp to the message
-        const msgTime = document.createElement("span")
-        msgTime.className = "msg--timestamp"
-        msgTime.innerText = msg.timestamp
-        msgEl.appendChild(msgTime)
-    
-        // Add message to message list
-        msgList.prepend(msgEl)
-    }
+    // Re-populate message list with messages
+    for (let i = 0; i < msgs.length; i++) createMessage(msgs[i])
+
 }
