@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login or Signup</title>
+    </head>
+
+    <body>
+        <main>
+            <p>
+                temporary session
+                or
+                create an account
+            </p>
+            
+            <h1>Create a temporary session</h1>
+            <form action="/signup/?temp" method="post">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username">
+                </div>
+
+                <div class="field">
+                    <label for="expires">Expires in</label>
+                    <select name="expires" id="expires">
+                        <option value="<%= 86400000 %>" selected>1 day</option>
+                        <option value="<%= 7 * 86400000 %>">1 week</option>
+                        <option value="<%= 30 * 86400000 %>">1 month</option>
+                    </select>
+                </div>
+
+                <input type="submit" value="Create">
+            </form>
+
+
+            <h1>Create an account</h1>
+            <form action="/signup" method="post">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username">
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="text" id="password" name="password">
+                </div>
+
+                <label for="remember">Remember me</label>
+                <input type="checkbox" id="remember" name="remember" checked>
+
+                <input type="submit" value="Create">
+            </form>
+
+
+        </main>
+    </body>
+
+</html>

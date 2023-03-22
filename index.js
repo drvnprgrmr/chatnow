@@ -1,6 +1,8 @@
 const http = require("http")
 const express = require("express")
 const { Server } = require("socket.io")
+const { v4: uuidv4 } = require("uuid")
+const session = require("express-session")
 
 const port = process.env.PORT || 3000
 
@@ -12,6 +14,12 @@ const io = new Server(httpServer)
 app.set("view engine", "ejs")
 app.set("views", "views")
 app.use(express.static("public"))
+app.use(express.urlencoded({ extended: false }))
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false
+}))
 
 // Socket.io 
 io.on("connection", async (socket) => {
@@ -56,6 +64,35 @@ app.get("/", (req, res) => {
     res.render("index")
 })
 
+app.route("/signup")
+.get((req, res) => {
+    res.render("signup")
+})
+.post((req, res) => {
+    const isTemp = "temp" in req.query
+    console.log(req.body)
+    
+    if (isTemp) {
+        const {username, expires} = req.body
+        const userId = uuidv4()
+
+        req.session.user = {
+            username,
+            expires,
+            userId
+        }
+
+        req.session.cookie.maxAge = +expires
+
+    } else {
+        const { username, password } = req.body
+
+        
+    }
+
+    res.end()
+    
+})
 
 
 httpServer.listen(port, () => {
