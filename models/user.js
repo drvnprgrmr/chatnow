@@ -26,18 +26,15 @@ const gChatSchema = new Schema({
         required: true,
         default: "Group Chat"
     },
+    createdBy: userRef,
     users: [userRef], 
     messages: [messageSchema]
 })
 
 const pChatSchema = new Schema({
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    },
+    user: userRef,
     messages: [messageSchema],
-    
-}, { timestamps: true })
+})
 
 const userSchema = new Schema({
     username: {
@@ -53,12 +50,14 @@ const userSchema = new Schema({
 })
 
 userSchema.pre("save", async function(next) {
+    // Hash the password
     this.password = await bcrypt.hash(this.password, 10)
 
     next()
 })
 
 userSchema.method("validatePassword", async function(password) {
+    // Compare to check if the password is valid
     return await bcrypt.compare(password, this.password)
 })
 

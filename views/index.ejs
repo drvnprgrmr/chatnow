@@ -6,7 +6,15 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+        <!-- Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Abel&family=Nova+Mono&family=Ubuntu&display=swap" rel="stylesheet">
+
+        <!-- My Stylesheets -->
         <link rel="stylesheet" href="styles/index.css">
+        <link rel="stylesheet" href="styles/auth.css">
 
         <!-- Favicon and manifest -->
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -41,6 +49,15 @@
                 </form>
             </div>
         </main>
+        
+        <div id="auth-wrapper">
+            
+            <div id="auth-switcher">
+                <%- include('./auth/signup') %>
+                <%- include('./auth/signin') %>
+            </div>
+
+        </div>
     </body>
 
     <script src="/socket.io/socket.io.js"></script>

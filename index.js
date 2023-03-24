@@ -64,11 +64,7 @@ app.get("/", (req, res) => {
     res.render("index")
 })
 
-app.route("/signup")
-.get((req, res) => {
-    res.render("signup")
-})
-.post((req, res) => {
+app.post("/signup", (req, res) => {
     const isTemp = "temp" in req.query
     console.log(req.body)
     
