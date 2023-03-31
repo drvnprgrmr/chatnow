@@ -32,14 +32,14 @@ main {
 
 }
 
-#me {
+#profile {
     height: 3rem;
     padding: 0 1rem;
     background-color: #495057;
     display: flex;
 }
 
-#username {
+#profile-username {
     background-color: #495057;
     border: none;
     outline: none;

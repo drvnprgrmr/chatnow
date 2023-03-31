@@ -1,8 +1,7 @@
 <!-- Signin section -->
 <section id="auth-signin">
 
-    <h1>Create an account</h1>
-    <form action="/signin" method="post">
+    <form action="/signin" method="post" class="auth">
         <div class="field">
             <label for="username">Username</label>
             <input type="text" id="username" name="username">
@@ -10,11 +9,13 @@
     
         <div class="field">
             <label for="password">Password</label>
-            <input type="text" id="password" name="password">
+            <input type="password" id="password" name="password">
         </div>
     
-        <label for="remember">Remember me</label>
-        <input type="checkbox" id="remember" name="remember" checked>
+        <div class="field">
+            <label for="remember">Remember me</label>
+            <input type="checkbox" id="remember" name="remember" checked>
+        </div>
     
         <input type="submit" value="Create">
     </form>

@@ -1,13 +1,7 @@
 <!-- Signup section -->
-<section id="auth-signup">
-    <p>
-        temporary session
-        or
-        create an account
-    </p>
-    
+<section id="auth-signup" class="hidden">
     <h1>Create a temporary session</h1>
-    <form action="/signup/?temp" method="post">
+    <form action="/signup/?temp" method="post" class="auth">
         <div class="field">
             <label for="username">Username</label>
             <input type="text" id="username" name="username">
@@ -27,7 +21,7 @@
 
 
     <h1>Create an account</h1>
-    <form action="/signup" method="post">
+    <form action="/signup" method="post" class="auth">
         <div class="field">
             <label for="username">Username</label>
             <input type="text" id="username" name="username">
@@ -35,11 +29,13 @@
 
         <div class="field">
             <label for="password">Password</label>
-            <input type="text" id="password" name="password">
+            <input type="password" id="password" name="password">
         </div>
 
-        <label for="remember">Remember me</label>
-        <input type="checkbox" id="remember" name="remember" checked>
+        <div class="field">
+            <label for="remember">Remember me</label>
+            <input type="checkbox" id="remember" name="remember" checked>
+        </div>
 
         <input type="submit" value="Create">
     </form>

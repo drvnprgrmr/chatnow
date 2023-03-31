@@ -28,7 +28,7 @@
     <body>
         <main>
             <div id="sidebar">
-                <header id="me"><input type="text" id="username" autocomplete="off" disabled></header>
+                <header id="profile"><input type="text" id="profile-username" autocomplete="off" disabled></header>
                 <ul id="user-list">
                     
                 </ul>
@@ -52,15 +52,20 @@
         
         <div id="auth-wrapper">
             
-            <div id="auth-switcher">
-                <%- include('./auth/signup') %>
+            <div id="auth">
+                <div id="toggle">
+                    <h1 id="toggle-signin" class="selected">Log In</h1>
+                    <h1 id="toggle-signup">Sign Up</h1>
+                </div>
                 <%- include('./auth/signin') %>
+                <%- include('./auth/signup') %>
             </div>
 
         </div>
     </body>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="scripts/socket.js"></script>
     <script src="scripts/index.js"></script>
 
 </html>
