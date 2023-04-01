@@ -2,7 +2,6 @@ const http = require("http")
 const express = require("express")
 const { Server } = require("socket.io")
 const { v4: uuidv4 } = require("uuid")
-const session = require("express-session")
 
 const port = process.env.PORT || 3000
 
@@ -15,11 +14,6 @@ app.set("view engine", "ejs")
 app.set("views", "views")
 app.use(express.static("public"))
 app.use(express.urlencoded({ extended: false }))
-app.use(session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: false
-}))
 
 // Socket.io 
 io.on("connection", async (socket) => {
