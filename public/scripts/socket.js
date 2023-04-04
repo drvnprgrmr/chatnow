@@ -1,3 +1,5 @@
+const socket = io({ autoConnect: false })
+
 const msgInp = document.getElementById("msg-inp")
 const form = document.getElementById("form")
 
@@ -16,18 +18,6 @@ let sendTo = "group"
 const groupMessages = []
 const privateMessages = {}
 
-const socket = io()
-
-// Load username
-let username = sessionStorage.getItem("username")
-if (!username) {
-    username = prompt("Enter a username: ")
-    sessionStorage.setItem("username", username)
-}
-
-// Set the username of the user
-const usernameEl = document.getElementById("username")
-usernameEl.value = username
 
 // Show the sidebar and hide chat when back is clicked
 back.addEventListener("click", () => {
@@ -37,13 +27,18 @@ back.addEventListener("click", () => {
 })
 
 
+let thisUser
+
 
 /**
  * Socket stuff
  */
 socket.on("connect", () => {
     console.log("connected to server")
-    socket.emit("user:enter", { id: socket.id, username })
+
+    // Load user info
+    thisUser = JSON.parse(localStorage.getItem("user"))
+    socket.emit("user:enter", thisUser) 
 
     const groupEl = createUser({id: "group", username: "Group Chat"})
     
@@ -70,7 +65,7 @@ socket.on("user:enter", user => {
 socket.on("user:dump", users => {
     // Add new user to list of connected users
     for (let {id, username} of users) {
-        if (id !== socket.id) {
+        if (id !== thisUser.id) {
             // Create new user
             createUser({id, username})
 
@@ -131,7 +126,7 @@ form.addEventListener("submit", (e) => {
 
         // Generate message object
         const msg = {
-            userId: socket.id,
+            userId: thisUser.id,
             username,
             text: msgInp.value,
             timestamp
@@ -168,7 +163,7 @@ function createMessage(msg) {
     msgEl.classList.add("msg")
 
     // Check if it is my message
-    if (msg.userId === socket.id) {
+    if (msg.userId === thisUser.id) {
         msgEl.classList.add("my-msg")
     }
 

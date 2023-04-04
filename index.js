@@ -1,7 +1,11 @@
 const http = require("http")
 const express = require("express")
 const { Server } = require("socket.io")
-const { v4: uuidv4 } = require("uuid")
+
+
+const connectDB = require("./connect-db")
+const Account = require("./models/account")
+const Chat = require("./models/chat")
 
 const port = process.env.PORT || 3000
 
@@ -30,7 +34,8 @@ io.on("connection", async (socket) => {
 
 
     // Tell everyone else about new user
-    socket.on("user:enter", (data) => {  
+    socket.on("user:enter", (data) => {
+        console.log(data) 
         socket.username = data.username
         socket.broadcast.emit("user:enter", data)
     })
@@ -54,37 +59,54 @@ io.on("connection", async (socket) => {
 
 
 // Express routes
-app.get("/", (req, res) => {
-    res.render("index")
+app.get("/", (req, res) => { res.render("index") })
+
+app.post("/signup", async (req, res) => {
+    const { username, password } = req.body
+
+    // Create an account for the user
+    const account = await Account.create({ username, password })
+
+    // Create a new chat and associate it with the account
+    const chat = await Chat.create({ account: account.id })
+
+    res.json({
+        id: account.id,
+        username
+    })
+    
 })
 
-app.post("/signup", (req, res) => {
-    const isTemp = "temp" in req.query
-    console.log(req.body)
-    
-    if (isTemp) {
-        const {username, expires} = req.body
-        const userId = uuidv4()
+app.post("/signup-temp", async (req, res) => {
+    const { username, expires } = req.body
 
-        req.session.user = {
-            username,
-            expires,
-            userId
-        }
+})
 
-        req.session.cookie.maxAge = +expires
+app.post("/signin", async (req, res) => {
+    const { username, password } = req.body
 
-    } else {
-        const { username, password } = req.body
+    // Locate the account of the user
+    const account = await Account.findOne({ username })
 
-        
+    if (!account) {
+        return res.status(404).send("Sorry, that account does not exist")
     }
 
-    res.end()
+    else if (! await account.validatePassword(password)) {
+        return res.status(401).send("Invalid password")
+    }
     
+
+    res.json({
+        id: account.id,
+        username
+    })
 })
 
 
 httpServer.listen(port, () => {
     console.log("Server is running on http://localhost:" + port)
+
+    // Connect to the database
+    connectDB()
 })
