@@ -1,3 +1,33 @@
+window.onload = async () => {
+    let user = JSON.parse(localStorage.getItem("user"))
+    console.log(user)
+    if (user.id && user.sessionId) {
+        let isValid = false
+        await fetch("/confirm-session", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: localStorage.getItem("user")
+        }).then(resp => {
+            if (resp.status !== 200) throw new Error()
+            return resp.json() 
+        }).then(usr => {
+            localStorage.setItem("user", JSON.stringify(usr))
+            isValid = true
+        }).catch()
+
+        if (isValid) {
+            initApp(JSON.parse(localStorage.getItem("user")))
+        }
+    
+    }
+
+}
+
+
+
+
 // Get the forms
 const signinForm = document.getElementById("signin-form")
 const signupForm = document.getElementById("signup-form")
@@ -70,3 +100,6 @@ function initApp(user) {
     // Connect the websocket
     socket.connect()
 }
+
+
+

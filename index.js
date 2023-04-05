@@ -1,7 +1,7 @@
 const http = require("http")
 const express = require("express")
 const { Server } = require("socket.io")
-
+const { v4: uuidv4 } = require('uuid');
 
 const connectDB = require("./connect-db")
 const Account = require("./models/account")
@@ -18,6 +18,8 @@ app.set("view engine", "ejs")
 app.set("views", "views")
 app.use(express.static("public"))
 app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
+
 
 // Socket.io 
 io.on("connection", async (socket) => {
@@ -34,15 +36,16 @@ io.on("connection", async (socket) => {
 
 
     // Tell everyone else about new user
-    socket.on("user:enter", (data) => {
-        console.log(data) 
-        socket.username = data.username
-        socket.broadcast.emit("user:enter", data)
+    socket.on("user:enter", (user) => {
+        console.log(user) 
+        socket.userId = user.id
+        socket.username = user.username
+        socket.broadcast.emit("user:enter", user)
     })
 
     socket.on("disconnect", reason => {
         console.log("Client disconnected: ", socket.id, `(${reason})`)
-        socket.broadcast.emit("user:leave", socket.id)
+        socket.broadcast.emit("user:leave", socket.userId)
     })
 
     socket.on("groupMsg:post", (msg) => {
@@ -51,7 +54,8 @@ io.on("connection", async (socket) => {
 
     socket.on("privMsg:post", (id, msg) => {
         // Send message to user with id
-        socket.to(id).emit("privMsg:get", msg)
+        socket.to(id).emit("privMsg:get", socket.id, msg)
+        console.log(msg, id)
     })
     
 
@@ -64,15 +68,17 @@ app.get("/", (req, res) => { res.render("index") })
 app.post("/signup", async (req, res) => {
     const { username, password } = req.body
 
+    const sessionId = uuidv4()
     // Create an account for the user
-    const account = await Account.create({ username, password })
+    const account = await Account.create({ username, password, sessionId })
 
     // Create a new chat and associate it with the account
-    const chat = await Chat.create({ account: account.id })
+    await Chat.create({ account: account.id })
 
     res.json({
         id: account.id,
-        username
+        username,
+        sessionId
     })
     
 })
@@ -96,13 +102,33 @@ app.post("/signin", async (req, res) => {
         return res.status(401).send("Invalid password")
     }
     
+    const sessionId = uuidv4()
+    account.sessionId = sessionId
+    await account.save() 
 
     res.json({
         id: account.id,
-        username
+        username,
+        sessionId
     })
 })
 
+app.post("/confirm-session", async (req, res) => {
+    const {id, sessionId} = req.body
+
+    
+    const account = await Account.findById(id)
+
+    if (!account) return res.status(404).end()
+
+    if (! await account.validateSession(sessionId)) return res.status(401).end()
+
+    return res.json({
+        id: account.id,
+        username: account.username,
+        sessionId
+    })
+})
 
 httpServer.listen(port, () => {
     console.log("Server is running on http://localhost:" + port)

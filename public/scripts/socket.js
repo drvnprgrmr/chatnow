@@ -65,12 +65,12 @@ socket.on("user:enter", user => {
 socket.on("user:dump", users => {
     // Add new user to list of connected users
     for (let {id, username} of users) {
-        if (id !== thisUser.id) {
+        if (id !== socket.id) {
             // Create new user
             createUser({id, username})
 
             // Create new list to hold messages to this user
-            privateMessages[id] = []
+            privateMessages[thisUser.id] = []
 
         }
     }
@@ -99,12 +99,13 @@ socket.on("groupMsg:get", (msg) => {
     
 })
 
-socket.on("privMsg:get", msg => {
+socket.on("privMsg:get", (from, msg) => {
+    console.log(from, msg)
     // Create message element and add it to page
-    if (sendTo === msg.userId) createMessage(msg)
+    if (sendTo === from) createMessage(msg)
     else {
         // Increase the notification count
-        const unreadEl = document.querySelector(`#${msg.userId} .user--unread`)
+        const unreadEl = document.querySelector(`#${from} .user--unread`)
         unreadEl.style.display = "initial"
         unreadEl.textContent = +unreadEl.textContent + 1
 
@@ -127,7 +128,7 @@ form.addEventListener("submit", (e) => {
         // Generate message object
         const msg = {
             userId: thisUser.id,
-            username,
+            username: thisUser.username,
             text: msgInp.value,
             timestamp
         }
@@ -142,7 +143,8 @@ form.addEventListener("submit", (e) => {
             socket.emit("groupMsg:post", msg)
             msgInp.value = ""
         } else {
-            privateMessages[sendTo].push(msg)
+            console.log(privateMessages[thisUser.id], sendTo)
+            privateMessages[thisUser.id].push(msg)
 
             socket.emit("privMsg:post", sendTo, msg)
             msgInp.value = ""
@@ -220,12 +222,12 @@ function createUser(user) {
 
 function selectUser(ev) {
     // Get selected user
-    const user = ev.currentTarget
+    const userEl = ev.currentTarget
 
     // Make sure user isn't currently selected
-    if (!user.classList.contains("user--selected")) {
+    if (!userEl.classList.contains("user--selected")) {
         // Set the name of the current user
-        currentUser.innerText = user.innerText
+        currentUser.innerText = userEl.innerText
 
         // Clear current chat list
         msgList.innerHTML = ""
@@ -235,23 +237,23 @@ function selectUser(ev) {
         if (prevUser) prevUser.classList.remove("user--selected")
     
         // Highlight user clicked
-        user.classList.add("user--selected")
+        userEl.classList.add("user--selected")
 
         // Clear unread notification
-        const unreadEl = user.lastChild
+        const unreadEl = userEl.lastChild
         if (unreadEl.textContent !== "") {
             unreadEl.style.display = "none"
             unreadEl.textContent = ""
         }
     
-        if (user.id === "group") {
+        if (userEl.id === "group") {
             // Load group messages
             loadMessages()
             sendTo = "group"
         } else {
             // Load private messages
-            loadMessages(user.id)
-            sendTo = user.id
+            loadMessages(thisUser.id)
+            sendTo = userEl.id
         }
     }
 
