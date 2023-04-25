@@ -29,7 +29,7 @@ io.on("connection", async (socket) => {
     // Tell new user about previously existing users
     if (sockets.length > 1) {
         socket.emit("user:dump", sockets.map(s => {
-            return {id: s.id, username: s.username}
+            return {sockId: s.id, userId: s.userId, username: s.username}
         }))
     }
 
@@ -37,25 +37,27 @@ io.on("connection", async (socket) => {
 
     // Tell everyone else about new user
     socket.on("user:enter", (user) => {
-        console.log(user) 
+        user.sockId = socket.id
+
         socket.userId = user.id
         socket.username = user.username
+        console.log(user)
         socket.broadcast.emit("user:enter", user)
     })
 
     socket.on("disconnect", reason => {
         console.log("Client disconnected: ", socket.id, `(${reason})`)
-        socket.broadcast.emit("user:leave", socket.userId)
+        socket.broadcast.emit("user:leave", socket.id)
     })
 
     socket.on("groupMsg:post", (msg) => {
         socket.broadcast.emit("groupMsg:get", msg)
     })
 
-    socket.on("privMsg:post", (id, msg) => {
+    socket.on("privMsg:post", (sendTo, msg) => {
         // Send message to user with id
-        socket.to(id).emit("privMsg:get", socket.id, msg)
-        console.log(msg, id)
+        socket.to(sendTo).emit("privMsg:get", socket.id, msg)
+        console.log(msg, sendTo)
     })
     
 

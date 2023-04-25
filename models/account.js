@@ -5,12 +5,13 @@ const accountSchema = new Schema({
     username: {
         type: String,
         required: true,
+        unique: true
     },
     password: {
         type: String,
         required: true
     },
-    associates: [{ type: Schema.Types.ObjectId, ref: "Account" }],
+    friends: [{ type: Schema.Types.ObjectId, ref: "Account" }],
     sessionId: {
         type: String,
         required: true

@@ -14,6 +14,8 @@ const currentUser = document.getElementById("current-user")
 
 let sendTo = "group"
 
+const socksToUsers = {}
+
 // Create stores to hold general and private messages
 const groupMessages = []
 const privateMessages = {}
@@ -58,19 +60,24 @@ socket.on("user:enter", user => {
     // Create new user
     createUser(user)
 
+    socksToUsers[user.sockId] = user.id
+
     // Create new list to hold messages to this user
     privateMessages[user.id] = []
 })
 
 socket.on("user:dump", users => {
     // Add new user to list of connected users
-    for (let {id, username} of users) {
-        if (id !== socket.id) {
+    for (let {sockId, userId, username} of users) {
+        if (sockId !== socket.id) {
             // Create new user
-            createUser({id, username})
+            createUser({sockId, username})
+
+
+            socksToUsers[sockId] = userId
 
             // Create new list to hold messages to this user
-            privateMessages[thisUser.id] = []
+            privateMessages[userId] = []
 
         }
     }
@@ -143,8 +150,8 @@ form.addEventListener("submit", (e) => {
             socket.emit("groupMsg:post", msg)
             msgInp.value = ""
         } else {
-            console.log(privateMessages[thisUser.id], sendTo)
-            privateMessages[thisUser.id].push(msg)
+            console.log(privateMessages[socksToUsers[sendTo]], sendTo)
+            privateMessages[socksToUsers[sendTo]].push(msg)
 
             socket.emit("privMsg:post", sendTo, msg)
             msgInp.value = ""
@@ -201,7 +208,7 @@ function createUser(user) {
     const userEl = document.createElement("li")
 
     // Add attributes to user
-    userEl.id = user.id
+    userEl.id = user.sockId
     userEl.className = "user"
     userEl.innerText = user.username
     
@@ -252,7 +259,7 @@ function selectUser(ev) {
             sendTo = "group"
         } else {
             // Load private messages
-            loadMessages(thisUser.id)
+            loadMessages(socksToUsers[userEl.id])
             sendTo = userEl.id
         }
     }

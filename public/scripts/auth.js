@@ -1,4 +1,9 @@
+const loader = document.getElementById("loader-screen")
+
+
 window.onload = async () => {
+    //TODO: USE SOCKET INSTEAD
+    const authSocket = io("/auth")
     let user = JSON.parse(localStorage.getItem("user"))
     console.log(user)
     if (user.id && user.sessionId) {
@@ -22,7 +27,7 @@ window.onload = async () => {
         }
     
     }
-
+    loader.style.display = "none"
 }
 
 

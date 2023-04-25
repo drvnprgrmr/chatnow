@@ -228,3 +228,48 @@ main {
         max-width: 90%;
     }
 }
+
+.screen-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 97vw;
+    height: 97vh;
+
+    border-radius: .3rem;
+    background-color: #2e3440;
+}
+
+.loader {
+    height: 50px;
+    width: 50px;
+    border: 3px solid transparent;
+    border-top: 3px solid #adb5bd;
+    border-radius: 50%;
+    animation: loader 1s linear infinite;
+}
+
+@keyframes loader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+    
+}
