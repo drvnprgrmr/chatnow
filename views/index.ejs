@@ -15,6 +15,7 @@
         <!-- My Stylesheets -->
         <link rel="stylesheet" href="styles/index.css">
         <link rel="stylesheet" href="styles/auth.css">
+        <!-- <link rel="stylesheet" href="styles/friend.css"> -->
 
         <!-- Favicon and manifest -->
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -32,6 +33,8 @@
                 <ul id="user-list">
                     
                 </ul>
+                <!-- Add new friends -->
+                <span class="material-symbols-rounded" id="add-friend">add</span>
             </div>
             <div id="chat">
                 <header id="current-chat">
@@ -64,6 +67,7 @@
         </div>
 
         <%- include('./loader') %>
+        <%- include('./friend') %>
     </body>
 
     <script src="/socket.io/socket.io.js"></script>

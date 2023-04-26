@@ -33,3 +33,20 @@ toggle.addEventListener("click", ev => {
 
     }
 })
+
+
+const addFriend = document.getElementById("add-friend")
+const friendRequest = document.getElementById("friend-request")
+const sendFriendRequest = document.getElementById("send-friend-request")
+
+addFriend.addEventListener("click", ev => {
+    friendRequest.style.display = "flex"
+})
+
+sendFriendRequest.addEventListener("click", ev => {
+    const friend = document.getElementById("friend")
+    if (!friend.value.trim()) return
+
+    // socket.
+})
+
